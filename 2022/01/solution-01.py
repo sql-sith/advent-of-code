@@ -2,12 +2,12 @@
 Solution to the first 1-Dec-2022 puzzle for Advent of Code (https://adventofcode.com)
 """
 
-debug = 0
+debug = False
+current_calory_total = 0
+current_elf_number = 1
+best_elf = {"elf_number": 1, "elf_calories": 0}
 
 with open("./2022/01/input.txt", mode="r") as f:
-    current_calory_total = 0
-    current_elf_number = 1
-    best_elf = {"elf_number": 1, "elf_calories": 0}
     for line in f:
         try:
             current_calories = int(line.strip())

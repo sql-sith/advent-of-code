@@ -4,14 +4,14 @@ Solution to the second 1-Dec-2022 puzzle for Advent of Code (https://adventofcod
 
 from sortedcontainers import SortedList
 
-debug = 0
+debug = False
 number_of_elves = 3
+current_elf_number = 1
+current_calory_total = 0
+best_elves = SortedList()
+best_elves.add(0)
 
 with open("./2022/01/input.txt", mode="r") as f:
-    current_elf_number = 1
-    current_calory_total = 0
-    best_elves = SortedList()
-
     for line in f:
         try:
             current_calories = int(line.strip())
