@@ -5,7 +5,7 @@ Solution to the first 2-Dec-2022 puzzle for Advent of Code (https://adventofcode
 import re
 from enum import Enum
 
-class opt(Enum):
+class option(Enum):
     rock = 1
     paper = 2
     scissors = 3
@@ -14,27 +14,39 @@ class player(Enum):
     them = 0
     me = 1
 
-class win_loss_score(Enum):
+class outcome(Enum):
     loss = 0
     tie = 3
     win = 6
 
+outcome_score = {
+    outcome.loss: 0,
+    outcome.tie: 3,
+    outcome.win: 6
+}
+
 choice = { 
-    "A": {"name": opt.rock, "type": player.them},
-    "B": {"name": opt.paper, "type": player.them},
-    "C": {"name": opt.scissors, "type": player.them},
-    "X": {"name": opt.rock, "type": player.me, "score": 1},
-    "Y": {"name": opt.paper, "type": player.me, "score": 2},
-    "Z": {"name": opt.scissors, "type": player.me, "score": 3} 
+    "A": {"name": option.rock},
+    "B": {"name": option.paper},
+    "C": {"name": option.scissors},
+    "X": {"name": option.rock},
+    "Y": {"name": option.paper},
+    "Z": {"name": option.scissors} 
+}
+
+choice_score = {
+    option.rock: 1,
+    option.paper: 2,
+    option.scissors: 3
 }
 
 game_rule = { 
-    opt.rock: opt.scissors, # rock crushes scissors
-    opt.paper: opt.rock,    # paper covers rock
-    opt.scissors: opt.paper # scissors cuts paper
+    option.rock: option.scissors, # rock crushes scissors
+    option.paper: option.rock,    # paper covers rock
+    option.scissors: option.paper # scissors cuts paper
 }
 
-debug = True
+debug = False
 total_score = 0
 line_count = 0
 
@@ -46,23 +58,23 @@ with open("./2022/02/input.txt", mode="r") as f:
 
         their_choice, my_choice = regex.findall(line)
         
-        my_opt = choice[my_choice]["name"]
-        their_opt = choice[their_choice]["name"]
+        my_option = choice[my_choice]["name"]
+        their_option = choice[their_choice]["name"]
 
-        choice_score = choice[my_choice]["score"]
+        my_choice_score = choice_score[my_option]
 
-        if (my_opt, their_opt) in game_rule.items():
-            match_score = win_loss_score.win.value
-        elif (their_opt, my_opt) in game_rule.items():
-            match_score = win_loss_score.loss.value
+        if (my_option, their_option) in game_rule.items():
+            match_score = outcome_score[outcome.win]
+        elif (their_option, my_option) in game_rule.items():
+            match_score = outcome_score[outcome.loss]
         else:
-            match_score = win_loss_score.tie.value
+            match_score = outcome_score[outcome.tie]
 
-        total_score += match_score + choice_score
+        total_score += match_score + my_choice_score
 
         if debug:        
             print(f"line: {line.strip()}; their_choice: {their_choice}; my_choice: {my_choice}")
-            print(f"their choice enum {their_opt}: my choice enum: {my_opt}")
+            print(f"their choice enum {their_option}: my choice enum: {my_option}")
             print(f"choice score: {choice_score}")
             print(f"match score: {match_score}")
             print(f"total score: {total_score}")
