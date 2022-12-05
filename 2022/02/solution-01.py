@@ -36,7 +36,7 @@ choice_score = {
     option.scissors: 3
 }
 
-game_rule = { 
+win_over = { 
     option.rock: option.scissors, # rock crushes scissors
     option.paper: option.rock,    # paper covers rock
     option.scissors: option.paper # scissors cuts paper
@@ -49,7 +49,7 @@ line_count = 0
 regex = re.compile(r'\b[a-zA-Z]\b')
 
 print("")
-with open("./2022/02/input.txt", mode="r") as f:
+with open("./02/input.txt", mode="r") as f:
     for line in f:
         line_count += 1
 
@@ -60,12 +60,12 @@ with open("./2022/02/input.txt", mode="r") as f:
 
         my_choice_score = choice_score[my_option]
 
-        if (my_option, their_option) in game_rule.items():
-            match_score = outcome_score[outcome.win]
-        elif (their_option, my_option) in game_rule.items():
-            match_score = outcome_score[outcome.loss]
+        if (my_option, their_option) in win_over.items():
+            match_score = outcome.win.value
+        elif (their_option, my_option) in win_over.items():
+            match_score = outcome.loss.value
         else:
-            match_score = outcome_score[outcome.tie]
+            match_score = outcome.tie.value
 
         total_score += match_score + my_choice_score
 

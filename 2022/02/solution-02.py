@@ -10,22 +10,10 @@ class option(Enum):
     paper = 2
     scissors = 3
 
-option_score = {
-    option.rock: 1,
-    option.paper: 2,
-    option.scissors: 3
-}
-
 class outcome(Enum):
     loss = 0
     tie = 3
     win = 6
-
-outcome_score = {
-    outcome.loss: 0,
-    outcome.tie: 3,
-    outcome.win: 6
-}
 
 input_translator = { 
     "A": {"translation": option.rock},
@@ -36,14 +24,16 @@ input_translator = {
     "Z": {"translation": outcome.win} 
 }
 
-game_win_rule = { 
-    option.rock: option.scissors, # rock crushes scissors
-    option.paper: option.rock,    # paper covers rock
-    option.scissors: option.paper # scissors cuts paper
+win_over = { 
+    # x: y means "if they play x, i must play y to win."
+    option.rock: option.paper, # rock crushes scissors
+    option.paper: option.scissors,    # paper covers rock
+    option.scissors: option.rock # scissors cuts paper
 }
 
-# this will give a dictionary that is the reverse of game_win_rule:
-game_loss_rule = dict(zip(game_win_rule.values(), game_win_rule.keys()))
+# this will give a dictionary that is the reverse of game_win_rule.
+# therefore, x: y means "if they play x, i must play y to lose."
+lose_to = dict(zip(win_over.values(), win_over.keys()))
 
 debug = False
 total_score = 0
@@ -52,7 +42,7 @@ line_count = 0
 regex = re.compile(r'\b[a-zA-Z]\b')
 
 print("")
-with open("./2022/02/input.txt", mode="r") as f:
+with open("./02/input.txt", mode="r") as f:
     for line in f:
         line_count += 1
 
@@ -61,19 +51,15 @@ with open("./2022/02/input.txt", mode="r") as f:
         their_option = input_translator[first_letter]["translation"]
         desired_outcome = input_translator[second_letter]["translation"]
 
-        match_score = outcome_score[desired_outcome]
+        match_score = desired_outcome.value
 
         if desired_outcome == outcome.win:
-            # they need to lose, so look up their choice as a loser
-            # to find the choice we need to make to win:
-            choice_score = option_score[game_loss_rule[their_option]]
+            choice_score = win_over[their_option].value
         elif desired_outcome == outcome.loss:
-            # they need to win, so look up their choice as a winner
-            # to find the choice we need to make to lose:
-            choice_score = option_score[game_win_rule[their_option]]
+            choice_score = lose_to[their_option].value
         else:
             # in a tie, our choice is the same as theirs:
-            choice_score = option_score[their_option]
+            choice_score = their_option.value
 
         total_score += match_score + choice_score
 
