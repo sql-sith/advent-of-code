@@ -1,0 +1,88 @@
+"""
+Solution to the first 2-Dec-2022 puzzle for Advent of Code (https://adventofcode.com)
+"""
+
+import re
+from enum import Enum
+
+class option(Enum):
+    rock = 1
+    paper = 2
+    scissors = 3
+
+option_score = {
+    option.rock: 1,
+    option.paper: 2,
+    option.scissors: 3
+}
+
+class outcome(Enum):
+    loss = 0
+    tie = 3
+    win = 6
+
+outcome_score = {
+    outcome.loss: 0,
+    outcome.tie: 3,
+    outcome.win: 6
+}
+
+input_translator = { 
+    "A": {"translation": option.rock},
+    "B": {"translation": option.paper},
+    "C": {"translation": option.scissors},
+    "X": {"translation": outcome.loss},
+    "Y": {"translation": outcome.tie},
+    "Z": {"translation": outcome.win} 
+}
+
+game_win_rule = { 
+    option.rock: option.scissors, # rock crushes scissors
+    option.paper: option.rock,    # paper covers rock
+    option.scissors: option.paper # scissors cuts paper
+}
+
+# this will give a dictionary that is the reverse of game_win_rule:
+game_loss_rule = dict(zip(game_win_rule.values(), game_win_rule.keys()))
+
+debug = False
+total_score = 0
+line_count = 0
+
+regex = re.compile(r'\b[a-zA-Z]\b')
+
+print("")
+with open("./2022/02/input.txt", mode="r") as f:
+    for line in f:
+        line_count += 1
+
+        first_letter, second_letter = regex.findall(line)
+        
+        their_option = input_translator[first_letter]["translation"]
+        desired_outcome = input_translator[second_letter]["translation"]
+
+        match_score = outcome_score[desired_outcome]
+
+        if desired_outcome == outcome.win:
+            # they need to lose, so look up their choice as a loser
+            # to find the choice we need to make to win:
+            choice_score = option_score[game_loss_rule[their_option]]
+        elif desired_outcome == outcome.loss:
+            # they need to win, so look up their choice as a winner
+            # to find the choice we need to make to lose:
+            choice_score = option_score[game_win_rule[their_option]]
+        else:
+            # in a tie, our choice is the same as theirs:
+            choice_score = option_score[their_option]
+
+        total_score += match_score + choice_score
+
+        if debug:        
+            print(f"line: {line.strip()}; their option: {their_option}; desired outcome: {desired_outcome}")
+            print(f"choice score: {choice_score}")
+            print(f"match score: {match_score}")
+            print(f"total score for this round: {match_score + choice_score}")
+            print(f"overall total so far: {total_score}")
+            print("")
+
+print(f"\nTotal score is {total_score}. Lines read: {line_count}.")

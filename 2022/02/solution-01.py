@@ -10,10 +10,6 @@ class option(Enum):
     paper = 2
     scissors = 3
 
-class player(Enum):
-    them = 0
-    me = 1
-
 class outcome(Enum):
     loss = 0
     tie = 3
@@ -25,13 +21,13 @@ outcome_score = {
     outcome.win: 6
 }
 
-choice = { 
-    "A": {"name": option.rock},
-    "B": {"name": option.paper},
-    "C": {"name": option.scissors},
-    "X": {"name": option.rock},
-    "Y": {"name": option.paper},
-    "Z": {"name": option.scissors} 
+input_translator = { 
+    "A": {"translation": option.rock},
+    "B": {"translation": option.paper},
+    "C": {"translation": option.scissors},
+    "X": {"translation": option.rock},
+    "Y": {"translation": option.paper},
+    "Z": {"translation": option.scissors} 
 }
 
 choice_score = {
@@ -52,14 +48,15 @@ line_count = 0
 
 regex = re.compile(r'\b[a-zA-Z]\b')
 
+print("")
 with open("./2022/02/input.txt", mode="r") as f:
     for line in f:
         line_count += 1
 
-        their_choice, my_choice = regex.findall(line)
+        first_letter, second_letter = regex.findall(line)
         
-        my_option = choice[my_choice]["name"]
-        their_option = choice[their_choice]["name"]
+        their_option = input_translator[first_letter]["translation"]
+        my_option = input_translator[second_letter]["translation"]
 
         my_choice_score = choice_score[my_option]
 
@@ -73,11 +70,11 @@ with open("./2022/02/input.txt", mode="r") as f:
         total_score += match_score + my_choice_score
 
         if debug:        
-            print(f"line: {line.strip()}; their_choice: {their_choice}; my_choice: {my_choice}")
-            print(f"their choice enum {their_option}: my choice enum: {my_option}")
-            print(f"choice score: {choice_score}")
+            print(f"line: {line.strip()}; their option: {their_option}; my option: {my_option}")
+            print(f"choice score: {my_choice_score}")
             print(f"match score: {match_score}")
-            print(f"total score: {total_score}")
+            print(f"total score for this round: {match_score + my_choice_score}")
+            print(f"overall total so far: {total_score}")
             print("")
 
 print(f"\nTotal score is {total_score}. Lines read: {line_count}.")
